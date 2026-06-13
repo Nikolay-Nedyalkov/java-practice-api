@@ -14,27 +14,38 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<StudentResponse> getAllStudents() {
+        return studentRepository.findAll()
+                .stream()
+                .map(s -> new StudentResponse(s.getId(), s.getName(), s.getEmail(), s.getAge()))
+                .toList();
     }
 
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id)
+    public StudentResponse getStudentById(Long id) {
+        Student s = studentRepository.findById(id)
                 .orElseThrow(() -> new StudentNotFoundException(id));
+        return new StudentResponse(s.getId(), s.getName(), s.getEmail(), s.getAge());
     }
 
-    public Student addStudent(Student student) {
-        return studentRepository.save(student);
+    public StudentResponse addStudent(StudentRequest request) {
+        Student s = new Student(null, request.getName(), request.getEmail(), request.getAge());
+        Student saved = studentRepository.save(s);
+        return new StudentResponse(saved.getId(), saved.getName(), saved.getEmail(), saved.getAge());
     }
 
     public void deleteStudent(Long id) {
+        if (!studentRepository.existsById(id)) {
+            throw new StudentNotFoundException(id);
+        }
         studentRepository.deleteById(id);
     }
 
-    public Optional<Student> updateStudent(Long id, Student updated) {
-        return studentRepository.findById(id).map(existing -> {
-            Student s = new Student(id, updated.getName(), updated.getEmail(), updated.getAge());
-            return studentRepository.save(s);
-        });
+    public StudentResponse updateStudent(Long id, StudentRequest request) {
+        Student existing = studentRepository.findById(id)
+                .orElseThrow(() -> new StudentNotFoundException(id));
+        Student updated = new Student(existing.getId(), request.getName(), request.getEmail(), request.getAge());
+        Student saved = studentRepository.save(updated);
+        return new StudentResponse(saved.getId(), saved.getName(), saved.getEmail(), saved.getAge());
     }
+
 }

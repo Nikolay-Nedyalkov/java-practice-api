@@ -16,18 +16,18 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentResponse> getAllStudents() {
         return studentService.getAllStudents();
     }
 
     @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable Long id) {
+    public StudentResponse getStudentById(@PathVariable Long id) {
         return studentService.getStudentById(id);
     }
 
     @PostMapping
-    public Student addStudent(@Valid @RequestBody Student student) {
-        return studentService.addStudent(student);
+    public StudentResponse addStudent(@Valid @RequestBody StudentRequest request) {
+        return studentService.addStudent(request);
     }
 
     @DeleteMapping("/{id}")
@@ -36,8 +36,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student updated) {
-        return studentService.updateStudent(id, updated)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+    public StudentResponse updateStudent(@PathVariable Long id, @RequestBody StudentRequest request) {
+        return studentService.updateStudent(id, request);
     }
 }
