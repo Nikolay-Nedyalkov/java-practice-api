@@ -1,5 +1,6 @@
 package com.Nikolay.java_practice_api;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +22,11 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public Student getStudentById(@PathVariable Long id) {
-        return studentService.getStudentById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+        return studentService.getStudentById(id);
     }
 
     @PostMapping
-    public Student addStudent(@RequestBody Student student) {
+    public Student addStudent(@Valid @RequestBody Student student) {
         return studentService.addStudent(student);
     }
 
